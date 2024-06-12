@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="table-container">
+    <h1 class="acc-title">Lista de Tareas</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Prioridad</th>
+                <th>Etiqueta</th>
+                <th>Estado</th>
+                <th>Fecha de Vencimiento</th>
+                <th>Detalles</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+            <tr>
+                <td>{{ task.name }}</td>  
+                <td>{{ task.priority }}</td>         
+                <td>{{ task.tag }}</td>
+                <td>{{ task.status }}</td>
+                <td>{{ task.expire_date }}</td>
+                <td>{{ task.description }}</td>
+                <td>
+                    <a href="#">Editar</a>
+                    <a href="{% url 'delete_task' task.name %}">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+
+
+{% endblock %}

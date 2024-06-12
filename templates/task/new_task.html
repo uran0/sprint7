@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<div class="form-container">
+<h1 class="acc-title">Crear Nueva Tarea</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Crear tarea</button>
+    </form>
+</div>
+{% endblock %}

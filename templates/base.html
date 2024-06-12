@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tareas</title>
+    <link rel="stylesheet" href="{% static '/main.css' %}">
+</head>
+<body class="cuerpo">
+    <h1 class="uno-h1">Organizador de Tareas</h1>
+    <div>
+        <nav class="navbar">
+            <ul>
+                <a href="{% url 'welcome_page' %}">inicio</a>
+                <a href="{% url 'logout' %}">cerar sesión</a>
+            </ul>
+        </nav>
+    </div>
+
+    {% block content %}{% endblock %}
+</body>
+</html>
