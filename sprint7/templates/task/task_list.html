@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<h1>Lista de Tareas</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Fecha de Vencimiento</th>
+            <th>Etiqueta</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <td>{{ task.name }}</td>
+            <td>{{ task.expire_date }}</td>
+            <td>{{ task.tag }}</td>
+            <td>{{ task.status }}</td>
+            <td>
+                <a href="#">Editar</a>
+                <a href="#">Eliminar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+{% endblock %}
