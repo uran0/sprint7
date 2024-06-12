@@ -1,10 +1,13 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.http import HttpResponse, HttpResponseRedirect
 from django .utils.timezone import now
 from .models import Status, Task, Tag, Priority
 from account.models import User
-from .forms import TaskForm
+from .forms import TaskForm, TaskModelForm
+from django.urls import reverse
+from django.core.exceptions import PermissionDenied
 # Create your views here.
 
 @login_required
@@ -52,46 +55,35 @@ def my_tasks(request):
     return render(request, 'task/my_tasks.html', {'tasks': tasks})
 
 
-
 @login_required
-def delete_task(request,task_name):
+def delete_task(request,task_id):
     try:
-        user=User.objects.get(username=request.user.username)
-        task=Task.objects.get(name=task_name, user=user)
+        task= get_object_or_404(Task, id=task_id)
+        if not request.user.is_superuser:
+            raise PermissionDenied
         task.delete()
         return redirect("task_list")
     except Task.DoesNotExist:
         return redirect("task_list")
+    except PermissionDenied:
+        messages.error(request, "Sólo los administradores puedes eliminar tareas.")
+        return redirect("task_list")
 
 
 @login_required
-def edit_task(request, task_name):
-    try:
-        if request.method=="POST":
-            form=TaskForm(user=request.user.username, data=request.POST)
-            if form.is_valid():
-                data = form.cleaned_data
-                user = User.objects.get(username=request.user.username)
-                task = Task.objects.get(user=user, name=task_name)                
-                task.user = user
-                task.name = data["name"]
-                task.description = data["description"] if data["description"]!="" else "-sin información-"
-                task.expire_date = data["expire_date"]
-                task.status = Status.objects.get(id=data["status"])
-                task.tag = Tag.objects.get(id=data["tag"]) 
-                task.save()
-                return redirect("/home")
-        else:
-            initial_data = {
-                'name': task.name,
-                'description': task.description,
-                'expire_date': task.expire_date,
-                'status': task.status.id,
-                'tag': task.tag.id,
-            }
-            form = TaskForm(user=request.user.username, initial=initial_data)
+def edit_task(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+
+    if request.method == "POST":
+        form = TaskModelForm(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            return redirect("task_edit_success")
+    else:
+        form = TaskModelForm(instance=task)
     
-    except Task.DoesNotExist:
-        return redirect("task_list")
-    
-    return render(request, "new_task.html", context={'form': form, 'task_name': task_name})
+    return render(request, "task/edit_task.html", context={'form': form, 'task_id': task_id})
+
+@login_required
+def task_edit_success(request):
+    return render(request, "task/task_edit_success.html")
