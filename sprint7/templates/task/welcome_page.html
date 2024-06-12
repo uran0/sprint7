@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<h1>Bienvenido, {{ user.username }}!</h1>
+<p>¿Qué te gustaría hacer hoy?</p>
+<ul>
+    <li><a href="{%url 'new_task' %}">Agregar nueva tarea</a></li>
+    <li><a href="{%url 'task_list' %}">Ver todas las tareas</a></li>
+    <li><a href="{%url 'my_tasks' %}">Ver solo mis tareas</a></li>
+
+</ul>
+
+{% endblock %}
